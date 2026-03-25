@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sanya Vohra | CodSoft Internship</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=IM+Fell+English:ital@0;1&family=Special+Elite&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+    :root{
+      --paper:#f2ead8;
+      --paper2:#ede4cc;
+      --ink:#1a1408;
+      --ink2:#3a2e18;
+      --red:#8b1a1a;
+      --border:#8b7355;
+      --muted:#7a6a50;
+    }
+    html{scroll-behavior:smooth;}
+    body{
+      background:var(--paper);
+      color:var(--ink);
+      font-family:'IM Fell English',serif;
+      min-height:100vh;
+      overflow-x:hidden;
+      cursor:none;
+      /* paper texture via repeating gradient */
+      background-image:
+        repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(139,115,85,0.04) 28px,rgba(139,115,85,0.04) 29px),
+        repeating-linear-gradient(90deg,transparent,transparent 28px,rgba(139,115,85,0.02) 28px,rgba(139,115,85,0.02) 29px);
+    }
+
+    /* aged paper overlay */
+    body::after{
+      content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+      background:radial-gradient(ellipse at 50% 50%, transparent 60%, rgba(100,80,40,0.15) 100%);
+    }
+
+    /* cursor */
+    .cur{width:6px;height:6px;background:var(--ink);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);}
+    .cur-ring{width:24px;height:24px;border:1px solid rgba(26,20,8,0.4);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:all 0.15s ease;}
+
+    .page{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 40px 60px;}
+
+    /* masthead top rule */
+    .rule-top{
+      border:none;
+      border-top:4px double var(--border);
+      margin:32px 0 0;
+      opacity:0;animation:fadeIn 0.6s ease 0.1s forwards;
+    }
+    .rule-thin{border:none;border-top:1px solid var(--border);margin:8px 0;}
+    .rule-thick{border:none;border-top:3px solid var(--ink);margin:10px 0;}
+
+    /* date line */
+    .dateline{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:8px 0;
+      font-family:'Special Elite',monospace;
+      font-size:10px;
+      letter-spacing:0.15em;
+      text-transform:uppercase;
+      color:var(--muted);
+      opacity:0;animation:fadeIn 0.6s ease 0.2s forwards;
+    }
+
+    /* masthead */
+    .masthead{
+      text-align:center;
+      padding:20px 0 16px;
+      border-top:3px solid var(--ink);
+      border-bottom:3px solid var(--ink);
+      opacity:0;animation:fadeIn 0.8s ease 0.3s forwards;
+    }
+    .masthead-sub{
+      font-family:'Special Elite',monospace;
+      font-size:9px;
+      letter-spacing:0.35em;
+      text-transform:uppercase;
+      color:var(--muted);
+      margin-bottom:10px;
+    }
+    .masthead-title{
+      font-family:'UnifrakturMaguntia',cursive;
+      font-size:clamp(48px,9vw,96px);
+      line-height:1;
+      color:var(--ink);
+      letter-spacing:0.02em;
+    }
+    .masthead-tagline{
+      font-family:'IM Fell English',serif;
+      font-style:italic;
+      font-size:13px;
+      color:var(--muted);
+      margin-top:8px;
+      letter-spacing:0.05em;
+    }
+
+    /* edition bar */
+    .edition{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:8px 0;
+      font-family:'Special Elite',monospace;
+      font-size:9px;
+      letter-spacing:0.12em;
+      text-transform:uppercase;
+      color:var(--ink2);
+      border-bottom:1px solid var(--border);
+      opacity:0;animation:fadeIn 0.6s ease 0.5s forwards;
+    }
+
+    /* headline section */
+    .headline-section{
+      padding:32px 0 24px;
+      text-align:center;
+      border-bottom:1px solid var(--border);
+      opacity:0;animation:up 0.8s ease 0.6s forwards;
+    }
+    .kicker{
+      font-family:'Special Elite',monospace;
+      font-size:9px;
+      letter-spacing:0.3em;
+      text-transform:uppercase;
+      color:var(--red);
+      margin-bottom:12px;
+    }
+    .main-headline{
+      font-family:'Playfair Display',serif;
+      font-size:clamp(28px,5vw,56px);
+      font-weight:900;
+      line-height:1.05;
+      color:var(--ink);
+      margin-bottom:16px;
+    }
+    .main-headline em{font-style:italic;color:var(--red);}
+    .deck{
+      font-family:'IM Fell English',serif;
+      font-style:italic;
+      font-size:16px;
+      color:var(--ink2);
+      max-width:560px;
+      margin:0 auto;
+      line-height:1.6;
+    }
+
+    /* columns layout */
+    .columns{
+      display:grid;
+      grid-template-columns:1fr 2px 1fr 2px 1fr;
+      gap:0 24px;
+      padding:32px 0;
+      border-bottom:2px solid var(--ink);
+      opacity:0;animation:up 0.8s ease 0.8s forwards;
+    }
+    .col-divider{background:var(--border);width:1px;}
+
+    .col-label{
+      font-family:'Special Elite',monospace;
+      font-size:8px;
+      letter-spacing:0.25em;
+      text-transform:uppercase;
+      color:var(--muted);
+      border-bottom:1px solid var(--border);
+      padding-bottom:6px;
+      margin-bottom:12px;
+    }
+    .col-text{
+      font-family:'IM Fell English',serif;
+      font-size:13px;
+      line-height:1.75;
+      color:var(--ink2);
+      text-align:justify;
+    }
+    .col-text strong{font-weight:700;color:var(--ink);}
+    .drop-cap::first-letter{
+      font-family:'Playfair Display',serif;
+      font-size:52px;
+      font-weight:900;
+      float:left;
+      line-height:0.8;
+      margin:6px 6px 0 0;
+      color:var(--ink);
+    }
+
+    /* task articles */
+    .articles{
+      padding:32px 0;
+      opacity:0;animation:up 0.8s ease 1s forwards;
+    }
+    .articles-head{
+      font-family:'Playfair Display',serif;
+      font-size:11px;
+      letter-spacing:0.3em;
+      text-transform:uppercase;
+      color:var(--muted);
+      text-align:center;
+      margin-bottom:24px;
+    }
+
+    .article{
+      display:grid;
+      grid-template-columns:80px 1fr auto;
+      gap:24px;
+      align-items:start;
+      padding:24px 0;
+      border-top:1px solid var(--border);
+      text-decoration:none;
+      color:var(--ink);
+      transition:background 0.2s;
+      position:relative;
+    }
+    .article:hover{background:rgba(139,115,85,0.05);}
+    .article:hover .art-arrow{color:var(--red);}
+    .article:hover .art-num{color:var(--red);}
+
+    .art-num{
+      font-family:'Playfair Display',serif;
+      font-size:40px;
+      font-weight:900;
+      color:var(--paper2);
+      line-height:1;
+      -webkit-text-stroke:1px var(--border);
+      transition:color 0.3s,-webkit-text-stroke 0.3s;
+      text-align:center;
+    }
+    .article:hover .art-num{-webkit-text-stroke:1px var(--red);}
+
+    .art-kicker{
+      font-family:'Special Elite',monospace;
+      font-size:8px;
+      letter-spacing:0.25em;
+      text-transform:uppercase;
+      color:var(--red);
+      margin-bottom:6px;
+    }
+    .art-headline{
+      font-family:'Playfair Display',serif;
+      font-size:20px;
+      font-weight:700;
+      line-height:1.2;
+      margin-bottom:8px;
+      color:var(--ink);
+    }
+    .art-body{
+      font-family:'IM Fell English',serif;
+      font-size:12px;
+      color:var(--ink2);
+      line-height:1.65;
+    }
+    .art-tags{
+      margin-top:10px;
+      display:flex;gap:8px;flex-wrap:wrap;
+    }
+    .art-tag{
+      font-family:'Special Elite',monospace;
+      font-size:8px;
+      letter-spacing:0.12em;
+      text-transform:uppercase;
+      border:1px solid var(--border);
+      padding:2px 8px;
+      color:var(--muted);
+    }
+    .art-arrow{
+      font-size:20px;
+      color:var(--border);
+      transition:color 0.3s;
+      padding-top:4px;
+    }
+    .article.soon{opacity:0.4;pointer-events:none;}
+
+    /* footer */
+    .footer-rule{border:none;border-top:4px double var(--border);margin:0;}
+    footer{
+      padding:20px 0;
+      display:flex;align-items:center;justify-content:space-between;
+      font-family:'Special Elite',monospace;
+      font-size:9px;
+      letter-spacing:0.15em;
+      text-transform:uppercase;
+      color:var(--muted);
+    }
+    footer a{color:var(--muted);text-decoration:none;transition:color 0.2s;}
+    footer a:hover{color:var(--red);}
+    .footer-links{display:flex;gap:20px;}
+
+    @keyframes up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+    @media(max-width:700px){
+      .page{padding:0 20px 40px;}
+      .columns{grid-template-columns:1fr;gap:24px;}
+      .col-divider{display:none;}
+      .article{grid-template-columns:50px 1fr;gap:16px;}
+      .art-arrow{display:none;}
+    }
+  </style>
+</head>
+<body>
+  <div class="cur" id="cur"></div>
+  <div class="cur-ring" id="cur-ring"></div>
+
+  <div class="page">
+
+    <hr class="rule-top" />
+    <div class="dateline">
+      <span>Established March 2026</span>
+      <span>Web Development Edition</span>
+      <span>CodSoft Internship | Batch B89</span>
+    </div>
+    <hr class="rule-thick" />
+    <hr class="rule-thin" />
+
+    <div class="masthead">
+      <div class="masthead-sub">The Official Works of</div>
+      <div class="masthead-title">Sanya Vohra</div>
+      <div class="masthead-tagline">"Code Written With Intention, Craft Built With Care"</div>
+    </div>
+
+    <hr class="rule-thin" />
+    <div class="edition">
+      <span>Vol. I &nbsp;|&nbsp; Issue No. 1</span>
+      <span>Chitkara University, Himachal Pradesh</span>
+      <span>All Projects Herein Original</span>
+    </div>
+
+    <div class="headline-section">
+      <div class="kicker">Breaking News from the Dev Desk</div>
+      <h1 class="main-headline">Local Engineer Builds<br><em>Three Web Projects</em><br>In Record Time</h1>
+      <p class="deck">A promising Computer Science student completes her CodSoft internship tasks with remarkable attention to design and code quality.</p>
+    </div>
+
+    <div class="columns">
+      <div class="col">
+        <div class="col-label">About the Author</div>
+        <p class="col-text drop-cap"><strong>Sanya Vohra</strong>, a B.E. Computer Science student at Chitkara University, has taken to the world of web development with considerable enthusiasm and skill.</p>
+      </div>
+      <div class="col-divider"></div>
+      <div class="col">
+        <div class="col-label">Academic Standing</div>
+        <p class="col-text">Maintaining a commendable CGPA of <strong>8.52</strong>, she has demonstrated that academic excellence and practical skill need not be strangers to one another.</p>
+      </div>
+      <div class="col-divider"></div>
+      <div class="col">
+        <div class="col-label">Present Endeavour</div>
+        <p class="col-text">Currently serving as a <strong>Web Development Intern</strong> at CodSoft, March Batch B89, she submits her completed works for the reader's perusal below.</p>
+      </div>
+    </div>
+
+    <div class="articles">
+      <div class="articles-head">-- Project Dispatches --</div>
+
+      <a href="Portfolio/lev1task1.html" class="article">
+        <div class="art-num">01</div>
+        <div>
+          <div class="art-kicker">Level 1 | Task 1 | Completed</div>
+          <div class="art-headline">A Personal Portfolio of Considerable Elegance</div>
+          <div class="art-body">A fully responsive personal portfolio website, featuring smooth scroll animations, a custom cursor, and a dark editorial aesthetic. Built entirely from scratch using HTML, CSS and JavaScript.</div>
+          <div class="art-tags">
+            <span class="art-tag">HTML</span>
+            <span class="art-tag">CSS</span>
+            <span class="art-tag">JavaScript</span>
+          </div>
+        </div>
+        <div class="art-arrow">&#8599;</div>
+      </a>
+
+      <a href="#" class="article soon">
+        <div class="art-num">02</div>
+        <div>
+          <div class="art-kicker">Level 1 | Task 2 | Forthcoming</div>
+          <div class="art-headline">A Landing Page of Great Promise</div>
+          <div class="art-body">This correspondent awaits the arrival of said landing page with great anticipation. Check back shortly.</div>
+          <div class="art-tags">
+            <span class="art-tag">HTML</span>
+            <span class="art-tag">CSS</span>
+          </div>
+        </div>
+        <div class="art-arrow">&#8599;</div>
+      </a>
+
+      <a href="#" class="article soon">
+        <div class="art-num">03</div>
+        <div>
+          <div class="art-kicker">Level 1 | Task 3 | Forthcoming</div>
+          <div class="art-headline">An Interactive Calculator Awaited by Many</div>
+          <div class="art-body">Sources close to the developer confirm that a fully functional calculator is currently under construction. No further details available at press time.</div>
+          <div class="art-tags">
+            <span class="art-tag">HTML</span>
+            <span class="art-tag">CSS</span>
+            <span class="art-tag">JavaScript</span>
+          </div>
+        </div>
+        <div class="art-arrow">&#8599;</div>
+      </a>
+
+    </div>
+
+    <hr class="footer-rule" />
+    <footer>
+      <span>2026 <strong>Sanya Vohra</strong> | All Rights Reserved</span>
+      <div class="footer-links">
+        <a href="https://linkedin.com/in/sanya-vohra" target="_blank">LinkedIn</a>
+        <a href="https://github.com/Sanya-codes/CODSOFT" target="_blank">GitHub</a>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    const cur=document.getElementById('cur'),ring=document.getElementById('cur-ring');
+    let mx=0,my=0,rx=0,ry=0;
+    document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+    (function tick(){cur.style.left=mx+'px';cur.style.top=my+'px';rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(tick);})();
+    document.querySelectorAll('a').forEach(el=>{
+      el.addEventListener('mouseenter',()=>{ring.style.width='40px';ring.style.height='40px';ring.style.borderColor='rgba(139,26,26,0.5)';});
+      el.addEventListener('mouseleave',()=>{ring.style.width='24px';ring.style.height='24px';ring.style.borderColor='rgba(26,20,8,0.4)';});
+    });
+  </script>
+</body>
+</html>
