@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sanya Vohra | CodSoft Internship</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=IM+Fell+English:ital@0;1&family=Special+Elite&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=IM+Fell+English:ital@0;1&family=Special+Elite&display=swap" rel="stylesheet" />
   <style>
     *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
     :root{
@@ -25,25 +25,22 @@
       min-height:100vh;
       overflow-x:hidden;
       cursor:none;
-      /* paper texture via repeating gradient */
       background-image:
         repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(139,115,85,0.04) 28px,rgba(139,115,85,0.04) 29px),
         repeating-linear-gradient(90deg,transparent,transparent 28px,rgba(139,115,85,0.02) 28px,rgba(139,115,85,0.02) 29px);
     }
 
-    /* aged paper overlay */
+    
     body::after{
       content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       background:radial-gradient(ellipse at 50% 50%, transparent 60%, rgba(100,80,40,0.15) 100%);
     }
 
-    /* cursor */
     .cur{width:6px;height:6px;background:var(--ink);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);}
     .cur-ring{width:24px;height:24px;border:1px solid rgba(26,20,8,0.4);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:all 0.15s ease;}
 
     .page{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 40px 60px;}
 
-    /* masthead top rule */
     .rule-top{
       border:none;
       border-top:4px double var(--border);
@@ -53,7 +50,6 @@
     .rule-thin{border:none;border-top:1px solid var(--border);margin:8px 0;}
     .rule-thick{border:none;border-top:3px solid var(--ink);margin:10px 0;}
 
-    /* date line */
     .dateline{
       display:flex;align-items:center;justify-content:space-between;
       padding:8px 0;
@@ -65,7 +61,6 @@
       opacity:0;animation:fadeIn 0.6s ease 0.2s forwards;
     }
 
-    /* masthead */
     .masthead{
       text-align:center;
       padding:20px 0 16px;
@@ -82,7 +77,9 @@
       margin-bottom:10px;
     }
     .masthead-title{
-      font-family:'UnifrakturMaguntia',cursive;
+      font-family:'Cinzel',serif;
+      font-weight:700;
+      letter-spacing:0.05em;
       font-size:clamp(48px,9vw,96px);
       line-height:1;
       color:var(--ink);
@@ -96,8 +93,7 @@
       margin-top:8px;
       letter-spacing:0.05em;
     }
-
-    /* edition bar */
+    
     .edition{
       display:flex;align-items:center;justify-content:space-between;
       padding:8px 0;
@@ -110,7 +106,6 @@
       opacity:0;animation:fadeIn 0.6s ease 0.5s forwards;
     }
 
-    /* headline section */
     .headline-section{
       padding:32px 0 24px;
       text-align:center;
@@ -144,7 +139,6 @@
       line-height:1.6;
     }
 
-    /* columns layout */
     .columns{
       display:grid;
       grid-template-columns:1fr 2px 1fr 2px 1fr;
@@ -183,7 +177,6 @@
       color:var(--ink);
     }
 
-    /* task articles */
     .articles{
       padding:32px 0;
       opacity:0;animation:up 0.8s ease 1s forwards;
@@ -269,7 +262,6 @@
     }
     .article.soon{opacity:0.4;pointer-events:none;}
 
-    /* footer */
     .footer-rule{border:none;border-top:4px double var(--border);margin:0;}
     footer{
       padding:20px 0;
