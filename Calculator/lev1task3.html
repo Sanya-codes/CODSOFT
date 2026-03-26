@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculator — CodSoft Task 3</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap"
+    rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #0a0a0f;
+      --panel: #111118;
+      --surface: #1a1a24;
+      --border: #2a2a3a;
+      --accent: #00e5ff;
+      --accent2: #ff6b35;
+      --accent3: #a259ff;
+      --text-primary: #e8e8f0;
+      --text-dim: #6a6a80;
+      --glow: 0 0 20px rgba(0, 229, 255, 0.4);
+      --glow2: 0 0 20px rgba(255, 107, 53, 0.4);
+      --glow3: 0 0 20px rgba(162, 89, 255, 0.4);
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      font-family: 'Share Tech Mono', monospace;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Animated grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0, 229, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 229, 255, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      animation: gridScroll 20s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes gridScroll {
+      0% {
+        transform: translateY(0);
+      }
+
+      100% {
+        transform: translateY(40px);
+      }
+    }
+
+    /* Floating orbs */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.12;
+      pointer-events: none;
+      animation: floatOrb 8s ease-in-out infinite;
+    }
+
+    .orb-1 {
+      width: 400px;
+      height: 400px;
+      background: var(--accent);
+      top: -100px;
+      left: -100px;
+      animation-delay: 0s;
+    }
+
+    .orb-2 {
+      width: 300px;
+      height: 300px;
+      background: var(--accent2);
+      bottom: -80px;
+      right: -80px;
+      animation-delay: -4s;
+    }
+
+    .orb-3 {
+      width: 250px;
+      height: 250px;
+      background: var(--accent3);
+      bottom: 30%;
+      left: 10%;
+      animation-delay: -2s;
+    }
+
+    @keyframes floatOrb {
+
+      0%,
+      100% {
+        transform: translate(0, 0);
+      }
+
+      50% {
+        transform: translate(20px, -20px);
+      }
+    }
+
+    /* Calculator shell */
+    .calculator {
+      position: relative;
+      width: 340px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow:
+        0 0 0 1px rgba(0, 229, 255, 0.08),
+        0 30px 80px rgba(0, 0, 0, 0.8),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      animation: slideIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* Header label */
+    .calc-label {
+      font-family: 'Orbitron', monospace;
+      font-size: 10px;
+      letter-spacing: 4px;
+      color: var(--accent);
+      text-transform: uppercase;
+      text-align: center;
+      margin-bottom: 20px;
+      opacity: 0.7;
+    }
+
+    /* Display area */
+    .display {
+      background: #07070d;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      min-height: 110px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.6);
+    }
+
+    .display::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0, 229, 255, 0.03) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .expression {
+      font-size: 13px;
+      color: var(--text-dim);
+      min-height: 18px;
+      text-align: right;
+      letter-spacing: 1px;
+      transition: all 0.2s;
+      word-break: break-all;
+    }
+
+    .result {
+      font-family: 'Orbitron', monospace;
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-align: right;
+      letter-spacing: 2px;
+      transition: all 0.15s ease;
+      word-break: break-all;
+      line-height: 1.1;
+    }
+
+    .result.flash {
+      color: var(--accent);
+      text-shadow: var(--glow);
+    }
+
+    /* Scan line effect on display */
+    .display::after {
+      content: '';
+      position: absolute;
+      top: -100%;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.15), transparent);
+      animation: scanLine 4s linear infinite;
+    }
+
+    @keyframes scanLine {
+      from {
+        top: -5%;
+      }
+
+      to {
+        top: 105%;
+      }
+    }
+
+    /* Button grid */
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    /* Base button */
+    .btn {
+      position: relative;
+      height: 62px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--surface);
+      color: var(--text-primary);
+      font-family: 'Orbitron', monospace;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      overflow: hidden;
+      user-select: none;
+      letter-spacing: 0.5px;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, transparent 60%);
+      border-radius: inherit;
+      pointer-events: none;
+    }
+
+    /* Ripple effect */
+    .btn::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .btn:active::after {
+      opacity: 1;
+    }
+
+    .btn:hover {
+      border-color: rgba(0, 229, 255, 0.3);
+      background: #22222e;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    }
+
+    .btn:active {
+      transform: translateY(1px) scale(0.97);
+      box-shadow: none;
+    }
+
+    /* Number buttons */
+    .btn-num {
+      color: var(--text-primary);
+    }
+
+    /* Operator buttons */
+    .btn-op {
+      background: rgba(0, 229, 255, 0.06);
+      color: var(--accent);
+      border-color: rgba(0, 229, 255, 0.2);
+    }
+
+    .btn-op:hover {
+      background: rgba(0, 229, 255, 0.14);
+      border-color: rgba(0, 229, 255, 0.5);
+      box-shadow: 0 4px 20px rgba(0, 229, 255, 0.15);
+      text-shadow: 0 0 10px rgba(0, 229, 255, 0.8);
+    }
+
+    /* Action buttons (C, ±, %) */
+    .btn-action {
+      background: rgba(162, 89, 255, 0.08);
+      color: var(--accent3);
+      border-color: rgba(162, 89, 255, 0.2);
+    }
+
+    .btn-action:hover {
+      background: rgba(162, 89, 255, 0.16);
+      border-color: rgba(162, 89, 255, 0.5);
+      box-shadow: 0 4px 20px rgba(162, 89, 255, 0.15);
+      text-shadow: 0 0 10px rgba(162, 89, 255, 0.8);
+    }
+
+    /* Equals button */
+    .btn-eq {
+      background: linear-gradient(135deg, #ff6b35, #ff3d00);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 4px 20px rgba(255, 107, 53, 0.3);
+      font-size: 22px;
+    }
+
+    .btn-eq:hover {
+      background: linear-gradient(135deg, #ff7f4f, #ff5210);
+      box-shadow: 0 6px 30px rgba(255, 107, 53, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .btn-eq:active {
+      transform: translateY(1px) scale(0.97);
+    }
+
+    /* Zero spans 2 cols */
+    .btn-zero {
+      grid-column: span 2;
+    }
+
+    /* Error state */
+    .result.error {
+      color: var(--accent2);
+      font-size: 20px;
+    }
+
+    /* Keypad press animation */
+    @keyframes keyPress {
+      0% {
+        box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.4);
+      }
+
+      100% {
+        box-shadow: 0 0 0 10px rgba(0, 229, 255, 0);
+      }
+    }
+
+    .btn.pressed {
+      animation: keyPress 0.3s ease-out;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <div class="calculator">
+    <div class="calc-label">◈ CALC — SYS v1.0</div>
+
+    <div class="display">
+      <div class="expression" id="expression"></div>
+      <div class="result" id="result">0</div>
+    </div>
+
+    <div class="buttons">
+      <!-- Row 1 -->
+      <button class="btn btn-action" data-action="clear">C</button>
+      <button class="btn btn-action" data-action="sign">±</button>
+      <button class="btn btn-action" data-action="percent">%</button>
+      <button class="btn btn-op" data-action="operator" data-value="÷">÷</button>
+
+      <!-- Row 2 -->
+      <button class="btn btn-num" data-action="digit" data-value="7">7</button>
+      <button class="btn btn-num" data-action="digit" data-value="8">8</button>
+      <button class="btn btn-num" data-action="digit" data-value="9">9</button>
+      <button class="btn btn-op" data-action="operator" data-value="×">×</button>
+
+      <!-- Row 3 -->
+      <button class="btn btn-num" data-action="digit" data-value="4">4</button>
+      <button class="btn btn-num" data-action="digit" data-value="5">5</button>
+      <button class="btn btn-num" data-action="digit" data-value="6">6</button>
+      <button class="btn btn-op" data-action="operator" data-value="−">−</button>
+
+      <!-- Row 4 -->
+      <button class="btn btn-num" data-action="digit" data-value="1">1</button>
+      <button class="btn btn-num" data-action="digit" data-value="2">2</button>
+      <button class="btn btn-num" data-action="digit" data-value="3">3</button>
+      <button class="btn btn-op" data-action="operator" data-value="+">+</button>
+
+      <!-- Row 5 -->
+      <button class="btn btn-num btn-zero" data-action="digit" data-value="0">0</button>
+      <button class="btn btn-num" data-action="dot">.</button>
+      <button class="btn btn-eq" data-action="equals">=</button>
+    </div>
+  </div>
+
+  <script>
+    const resultEl = document.getElementById('result');
+    const expressionEl = document.getElementById('expression');
+
+    let currentVal = '0';
+    let prevVal = '';
+    let operator = null;
+    let justEvaled = false;
+    let shouldReset = false;
+
+    function updateDisplay(val, expr = '') {
+      // Trim very long numbers
+      let display = val;
+      if (!isNaN(display) && display.length > 12) {
+        display = parseFloat(display).toPrecision(8);
+      }
+      resultEl.textContent = display;
+      expressionEl.textContent = expr;
+    }
+
+    function flash() {
+      resultEl.classList.add('flash');
+      setTimeout(() => resultEl.classList.remove('flash'), 300);
+    }
+
+    function appendDigit(d) {
+      if (shouldReset) { currentVal = d; shouldReset = false; }
+      else if (currentVal === '0') currentVal = d;
+      else if (currentVal.length < 12) currentVal += d;
+      justEvaled = false;
+      updateDisplay(currentVal, buildExpr());
+    }
+
+    function appendDot() {
+      if (shouldReset) { currentVal = '0.'; shouldReset = false; }
+      else if (!currentVal.includes('.')) currentVal += '.';
+      updateDisplay(currentVal, buildExpr());
+    }
+
+    function setOperator(op) {
+      if (operator && !shouldReset) { calculate(); }
+      prevVal = currentVal;
+      operator = op;
+      shouldReset = true;
+      justEvaled = false;
+      updateDisplay(currentVal, `${formatNum(prevVal)} ${op}`);
+    }
+
+    function buildExpr() {
+      if (operator && prevVal !== '') return `${formatNum(prevVal)} ${operator}`;
+      return '';
+    }
+
+    function formatNum(n) {
+      let num = parseFloat(n);
+      if (isNaN(num)) return n;
+      if (Math.abs(num) >= 1e12) return num.toExponential(4);
+      return n;
+    }
+
+    function calculate() {
+      if (!operator || prevVal === '') return;
+      let a = parseFloat(prevVal);
+      let b = parseFloat(currentVal);
+      let res;
+
+      if (operator === '+') res = a + b;
+      if (operator === '−') res = a - b;
+      if (operator === '×') res = a * b;
+      if (operator === '÷') {
+        if (b === 0) { resultEl.classList.add('error'); updateDisplay('ERR: ÷0', `${formatNum(prevVal)} ÷ 0`); operator = null; prevVal = ''; shouldReset = true; return; }
+        res = a / b;
+      }
+
+      resultEl.classList.remove('error');
+      let resStr = String(parseFloat(res.toPrecision(12)));
+      expressionEl.textContent = `${formatNum(prevVal)} ${operator} ${formatNum(currentVal)} =`;
+      currentVal = resStr;
+      prevVal = '';
+      operator = null;
+      shouldReset = true;
+      justEvaled = true;
+      flash();
+      updateDisplay(currentVal, expressionEl.textContent);
+    }
+
+    function clear() {
+      currentVal = '0';
+      prevVal = '';
+      operator = null;
+      justEvaled = false;
+      shouldReset = false;
+      resultEl.classList.remove('error');
+      updateDisplay('0', '');
+    }
+
+    function toggleSign() {
+      if (currentVal === '0') return;
+      currentVal = currentVal.startsWith('-') ? currentVal.slice(1) : '-' + currentVal;
+      updateDisplay(currentVal, buildExpr());
+    }
+
+    function percent() {
+      let n = parseFloat(currentVal);
+      if (operator && prevVal !== '') {
+        currentVal = String(parseFloat(prevVal) * n / 100);
+      } else {
+        currentVal = String(n / 100);
+      }
+      updateDisplay(currentVal, buildExpr());
+    }
+
+    // Button handler
+    document.querySelectorAll('.btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        btn.classList.add('pressed');
+        setTimeout(() => btn.classList.remove('pressed'), 300);
+
+        const action = btn.dataset.action;
+        const value = btn.dataset.value;
+
+        if (action === 'digit') appendDigit(value);
+        if (action === 'dot') appendDot();
+        if (action === 'operator') setOperator(value);
+        if (action === 'equals') calculate();
+        if (action === 'clear') clear();
+        if (action === 'sign') toggleSign();
+        if (action === 'percent') percent();
+      });
+    });
+
+    // Keyboard support
+    document.addEventListener('keydown', e => {
+      const map = {
+        '0': '0', '1': '1', '2': '2', '3': '3', '4': '4',
+        '5': '5', '6': '6', '7': '7', '8': '8', '9': '9',
+        '.': 'dot', ',': 'dot',
+        '+': '+', '-': '−', '*': '×', '/': '÷',
+        'Enter': '=', '=': '=',
+        'Backspace': 'back', 'Escape': 'clear',
+        '%': '%'
+      };
+      const k = map[e.key];
+      if (!k) return;
+      e.preventDefault();
+      if ('0123456789'.includes(k)) appendDigit(k);
+      else if (k === 'dot') appendDot();
+      else if (['+', '−', '×', '÷'].includes(k)) setOperator(k);
+      else if (k === '=') calculate();
+      else if (k === 'clear') clear();
+      else if (k === '%') percent();
+      else if (k === 'back') {
+        if (shouldReset || currentVal.length <= 1) { currentVal = '0'; }
+        else { currentVal = currentVal.slice(0, -1) || '0'; }
+        updateDisplay(currentVal, buildExpr());
+      }
+    });
+
+    updateDisplay('0');
+  </script>
+</body>
+
+</html>
